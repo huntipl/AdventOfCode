@@ -181,246 +181,69 @@ fn main() {
     // Round 1
 
     for r in 0..4 {
-        let mut step = 0;
+        let mut index = r * 4;
 
-        A = R(
-            &F,
-            &A,
-            &B,
-            &C,
-            &D,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        A = R(&F, &A, &B, &C, &D, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        D = R(
-            &F,
-            &D,
-            &A,
-            &B,
-            &C,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        index += 1;
+        D = R(&F, &D, &A, &B, &C, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        C = R(
-            &F,
-            &C,
-            &D,
-            &A,
-            &B,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        index += 1;
+        C = R(&F, &C, &D, &A, &B, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        B = R(
-            &F,
-            &B,
-            &C,
-            &D,
-            &A,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        index += 1;
+        B = R(&F, &B, &C, &D, &A, k[index], s[index], i[index], &MM, &T);
     }
 
     // Round 2
 
     for r in 4..8 {
-        let mut step = 0;
+        let mut index = r * 4;
 
-        A = R(
-            &G,
-            &A,
-            &B,
-            &C,
-            &D,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        A = R(&G, &A, &B, &C, &D, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        D = R(
-            &G,
-            &D,
-            &A,
-            &B,
-            &C,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        index += 1;
+        D = R(&G, &D, &A, &B, &C, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        C = R(
-            &G,
-            &C,
-            &D,
-            &A,
-            &B,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        index += 1;
+        C = R(&G, &C, &D, &A, &B, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        B = R(
-            &G,
-            &B,
-            &C,
-            &D,
-            &A,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
-
+        index += 1;
+        B = R(&G, &B, &C, &D, &A, k[index], s[index], i[index], &MM, &T);
     }
 
     // Round 3
 
     for r in 8..12 {
-        let mut step = 0;
+        let mut index = r * 4;
 
-        A = R(
-            &H,
-            &A,
-            &B,
-            &C,
-            &D,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        A = R(&H, &A, &B, &C, &D, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        D = R(
-            &H,
-            &D,
-            &A,
-            &B,
-            &C,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        index += 1;
+        D = R(&H, &D, &A, &B, &C, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        C = R(
-            &H,
-            &C,
-            &D,
-            &A,
-            &B,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        index += 1;
+        C = R(&H, &C, &D, &A, &B, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        B = R(
-            &H,
-            &B,
-            &C,
-            &D,
-            &A,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        index += 1;
+        B = R(&H, &B, &C, &D, &A, k[index], s[index], i[index], &MM, &T);
     }
 
     // Round 4
 
     for r in 12..16 {
-        let mut step = 0;
+        let mut index = r * 4;
 
-        A = R(
-            &I,
-            &A,
-            &B,
-            &C,
-            &D,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        A = R(&I, &A, &B, &C, &D, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        D = R(
-            &I,
-            &D,
-            &A,
-            &B,
-            &C,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        index += 1;
+        D = R(&I, &D, &A, &B, &C, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        C = R(
-            &I,
-            &C,
-            &D,
-            &A,
-            &B,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        index += 1;
+        C = R(&I, &C, &D, &A, &B, k[index], s[index], i[index], &MM, &T);
 
-        step += 1;
-        B = R(
-            &I,
-            &B,
-            &C,
-            &D,
-            &A,
-            k[r * 4 + step],
-            s[r * 4 + step],
-            i[r * 4 + step],
-            &MM,
-            &T,
-        );
+        index += 1;
+        B = R(&I, &B, &C, &D, &A, k[index], s[index], i[index], &MM, &T);
     }
 
     let A = A.wrapping_add(AA);
