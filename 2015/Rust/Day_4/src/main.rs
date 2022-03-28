@@ -15,7 +15,7 @@ use crate::algo::md5;
 
 fn main() {
 
-    for x in 110000..u64::MAX {
+    for x in 0..u64::MAX {
         let input = format!("ckczppom{x}");
         let result = md5(&input);
         let s_res = result[0..6].to_string();
