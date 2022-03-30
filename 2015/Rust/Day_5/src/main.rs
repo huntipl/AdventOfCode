@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 fn is_naughty(line: &str) -> bool {
     let bad_strings = ["ab", "cd", "pq", "xy"];
     let vowels = ['a', 'e', 'i', 'o', 'u'];
@@ -38,13 +36,24 @@ fn is_naughty(line: &str) -> bool {
 
 fn better_is_naughty(line: &str) -> bool {
     let mut rule_1 = false;
+    let mut rule_2 = false;
 
-    for i in 0..line.chars().count()-3 {
-        println!("{:?}: {:?}", i, line.chars().collect::<Vec<char>>()[i..i+2]);
+    for i in 0..line.chars().count() {
+        
+        if !rule_1 && i < line.len()-3 {
+            let pair = &line[i..i+2];
+            if line[i+2..].contains(pair) {
+                rule_1 = true;
+            }
+        }
+        if !rule_2 && i < line.len()-2 && line.chars().nth(i).unwrap() == line.chars().nth(i+2).unwrap() {
+            rule_2 = true;
+        }
+
+        if rule_1 && rule_2 {
+            return false;
+        }
     }
-    panic!();
-
-
     true
 }
 
@@ -59,5 +68,5 @@ fn main() {
             counter += 1;
         }
     }
-    println!("{counter}");
+    println!("{counter} of {}", data.lines().count());
 }
