@@ -3,39 +3,7 @@
 
 use std::collections::HashMap;
 
-// #[derive(Debug, Clone, Copy)]
-// enum Operation<'a> {
-//     // x AND y -> z
-//     AND(&'a str,&'a str),
-//     // x OR y -> z
-//     OR(&'a str,&'a str),
-//     // x LSHIFT n -> y
-//     LSHIFT(&'a str, &'a str),
-//     // x RSHIFT n -> y
-//     RSHIFT(&'a str, &'a str),
-//     // NOT x -> f
-//     NOT(&'a str),
-//     // x -> y
-//     ASSIGN(&'a str),
-// }
-
-// #[derive(Debug)]
-// enum Operation {
-//     // x AND y -> z
-//     AND(str, str),
-//     // x OR y -> z
-//     OR(str,str),
-//     // x LSHIFT n -> y
-//     LSHIFT(str, str),
-//     // x RSHIFT n -> y
-//     RSHIFT(str, str),
-//     // NOT x -> f
-//     NOT(str),
-//     // x -> y
-//     ASSIGN(str),
-// }
-
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Operation {
     // x AND y -> z
     AND(String, String),
@@ -53,7 +21,7 @@ enum Operation {
 
 struct CircuitSolver {
     circuit: HashMap<String, Operation>,
-    _lookup: HashMap<String, u16>,
+    lookup: HashMap<String, u16>,
 }
 
 impl CircuitSolver {
@@ -91,20 +59,12 @@ impl CircuitSolver {
         }
     }
 
-    fn update_lookup(&mut self, k: String, v: u16) {
-        self._lookup.insert(k, v);
-    }
-
-    fn check_lookup(&mut self, k: String) -> Option<&u16> {
-        self._lookup.get(&k)
-    }
-
     fn get_circuit(&self, k: String) -> &Operation {
         self.circuit.get(&k).unwrap_or_else(|| panic!("Unable to find circuit point"))
     }
 
     fn solve(&mut self, start: &str) -> u16 {
-        let start = self.get_circuit(start.to_string());
+        let start = self.get_circuit(start.to_string()).clone();
 
         if let Operation::ASSIGN(x) = start {
             return self.resolve(&x);
@@ -118,21 +78,27 @@ impl CircuitSolver {
             None => self.resolve(v),
         }
     }
+    
     fn resolve(&mut self, variable: &str) -> u16 {
         print!("\nResolving var:{variable}");
         let result;
         if let Ok(v) = variable.parse::<u16>() {
             println!(" >>> resolved var:{variable} as {v}");
             // self.lookup.insert(variable.to_string(), v);
-            self.update_lookup(variable.to_string(), v);
+            self.lookup.insert(variable.to_string(), v);
+            return v;
+        }
+        else if self.lookup.contains_key(variable) {
+            let v = *self.lookup.get(variable).unwrap();
+            println!(" >>> found value in the lookup! {variable} : {v}");
             return v;
         }
         else {
-            result = self.circuit.get(variable).unwrap();
+            result = self.circuit.get(variable).unwrap().clone();
             print!(" - unable to resolve, unpacking: {result:?}");
         }
         
-        match result {
+        match &result {
             Operation::AND(x, y) => self.unpack(x) & self.unpack(y),
             Operation::OR(x, y) => self.unpack(x) | self.unpack(y),
             Operation::LSHIFT(x, n) => self.unpack(x) << self.unpack(n),
@@ -169,7 +135,7 @@ impl CircuitSolver {
     }
 
     pub(crate) fn new() -> Self {
-        CircuitSolver { circuit: HashMap::new(), _lookup: HashMap::new() }
+        CircuitSolver { circuit: HashMap::new(), lookup: HashMap::new() }
     }
 }
 
