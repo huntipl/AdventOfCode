@@ -60,7 +60,9 @@ impl CircuitSolver {
     }
 
     fn get_circuit(&self, k: String) -> &Operation {
-        self.circuit.get(&k).unwrap_or_else(|| panic!("Unable to find circuit point"))
+        self.circuit
+            .get(&k)
+            .unwrap_or_else(|| panic!("Unable to find circuit point"))
     }
 
     fn solve(&mut self, start: &str) -> u16 {
@@ -78,26 +80,23 @@ impl CircuitSolver {
             None => self.resolve(v),
         }
     }
-    
+
     fn resolve(&mut self, variable: &str) -> u16 {
         print!("\nResolving var:{variable}");
         let result;
         if let Ok(v) = variable.parse::<u16>() {
             println!(" >>> resolved var:{variable} as {v}");
-            // self.lookup.insert(variable.to_string(), v);
             self.lookup.insert(variable.to_string(), v);
             return v;
-        }
-        else if self.lookup.contains_key(variable) {
+        } else if self.lookup.contains_key(variable) {
             let v = *self.lookup.get(variable).unwrap();
             println!(" >>> found value in the lookup! {variable} : {v}");
             return v;
-        }
-        else {
+        } else {
             result = self.circuit.get(variable).unwrap().clone();
             print!(" - unable to resolve, unpacking: {result:?}");
         }
-        
+
         match &result {
             Operation::AND(x, y) => self.unpack(x) & self.unpack(y),
             Operation::OR(x, y) => self.unpack(x) | self.unpack(y),
@@ -135,7 +134,10 @@ impl CircuitSolver {
     }
 
     pub(crate) fn new() -> Self {
-        CircuitSolver { circuit: HashMap::new(), lookup: HashMap::new() }
+        CircuitSolver {
+            circuit: HashMap::new(),
+            lookup: HashMap::new(),
+        }
     }
 }
 
@@ -150,5 +152,5 @@ fn main() {
 
     let solution: u16 = solver.solve("a");
 
-    println!("Solution:: {solution}");
+    println!("\nSolution:: {solution}");
 }
