@@ -163,6 +163,8 @@ fn main() {
 
     let mut tail: Vec<String> = vec!["a".to_string()];
 
+    solver.lookup.insert("b".to_string(), 956); //part 2
+
     let solution: u16 = solver.resolve("a", &mut tail);
 
     tail.pop();
