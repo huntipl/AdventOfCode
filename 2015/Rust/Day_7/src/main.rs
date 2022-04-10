@@ -59,51 +59,62 @@ impl CircuitSolver {
         }
     }
 
-    fn get_circuit(&self, k: String) -> &Operation {
-        self.circuit
-            .get(&k)
-            .unwrap_or_else(|| panic!("Unable to find circuit point"))
-    }
-
-    fn solve(&mut self, start: &str) -> u16 {
-        let start = self.get_circuit(start.to_string()).clone();
-
-        if let Operation::ASSIGN(x) = start {
-            return self.resolve(&x);
-        };
-        panic!("NO solution");
-    }
-
-    fn unpack(&mut self, v: &str) -> u16 {
+    fn unpack(&mut self, v: &str, tail: &mut Vec<String>) -> u16 {
         match v.parse::<u16>().ok() {
-            Some(v) => v,
-            None => self.resolve(v),
+            Some(unpacked) => {
+                print!("[Unpacking] Unpacked {v:?} as {unpacked}\t");
+                unpacked
+            }
+            None => {
+                print!("[Unpacking] Unable to unpack {v:?}\t");
+                if tail.contains(&v.to_string()) {
+                    panic!("Circle!")
+                }
+
+                tail.push(v.to_string());
+                let res = self.resolve(v, tail);
+                tail.pop();
+
+                self.lookup.insert(v.to_string(), res);
+                res
+            }
         }
     }
 
-    fn resolve(&mut self, variable: &str) -> u16 {
-        print!("\nResolving var:{variable}");
+    fn resolve(&mut self, variable: &str, tail: &mut Vec<String>) -> u16 {
+        // print!("\n{tail:?} > Resolving var:{variable}");
+        print!("\ntail:{}\t|[Resolving] '{variable}'\t", tail.len());
+
         let result;
-        if let Ok(v) = variable.parse::<u16>() {
-            println!(" >>> resolved var:{variable} as {v}");
-            self.lookup.insert(variable.to_string(), v);
-            return v;
-        } else if self.lookup.contains_key(variable) {
-            let v = *self.lookup.get(variable).unwrap();
-            println!(" >>> found value in the lookup! {variable} : {v}");
-            return v;
-        } else {
-            result = self.circuit.get(variable).unwrap().clone();
-            print!(" - unable to resolve, unpacking: {result:?}");
+
+        match variable.parse::<u16>().ok() {
+            Some(v) => {
+                print!("[Resolved] v:{variable} as {v}\t");
+                self.lookup.insert(variable.to_string(), v);
+                return v;
+            }
+            _ if self.lookup.contains_key(variable) => {
+                let v = *self.lookup.get(variable).unwrap();
+                print!("[Found] in the lookup! {variable}:{v}\t");
+                return v;
+            }
+            _ => {
+                result = self.circuit.get(variable).unwrap().clone();
+                print!("[Unresolve] unpacking: {result:?}\t");
+            }
         }
 
         match &result {
-            Operation::AND(x, y) => self.unpack(x) & self.unpack(y),
-            Operation::OR(x, y) => self.unpack(x) | self.unpack(y),
-            Operation::LSHIFT(x, n) => self.unpack(x) << self.unpack(n),
-            Operation::RSHIFT(x, n) => self.unpack(x) >> self.unpack(n),
-            Operation::NOT(x) => !self.unpack(x),
-            Operation::ASSIGN(x) => self.unpack(x), //BUG here, it's not assigning value properly
+            Operation::AND(x, y) => self.unpack(x, tail) & self.unpack(y, tail),
+            Operation::OR(x, y) => self.unpack(x, tail) | self.unpack(y, tail),
+            Operation::LSHIFT(x, n) => self.unpack(x, tail) << self.unpack(n, tail),
+            Operation::RSHIFT(x, n) => self.unpack(x, tail) >> self.unpack(n, tail),
+            Operation::NOT(x) => !self.unpack(x, tail),
+            Operation::ASSIGN(x) => {
+                let x = self.unpack(x, tail);
+                self.lookup.insert(variable.to_string(), x);
+                x
+            }
         }
     }
 
@@ -150,7 +161,11 @@ fn main() {
         solver.process_input(line);
     }
 
-    let solution: u16 = solver.solve("a");
+    let mut tail: Vec<String> = vec!["a".to_string()];
 
-    println!("\nSolution:: {solution}");
+    let solution: u16 = solver.resolve("a", &mut tail);
+
+    tail.pop();
+
+    println!("\n\nSolution:: {solution}, tail: {tail:?}");
 }
