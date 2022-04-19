@@ -1,5 +1,4 @@
 fn main() {
-    println!("Hello, world!");
     // escapes:
     // \\ \" \x12
 
@@ -8,30 +7,65 @@ fn main() {
     let mut character_counter = 0;
     let mut byte_counter = 0;
 
-    let mut total_hex = 0;
-    let mut total_quote = 0;
-    let mut total_slash = 0;
-    let mut total_surrounding_quotes = 0;
+    let mut slash = 0;
+    let mut hex = 0;
+    let mut quote = 0;
 
-    for line in file.lines() {
-        let tmp_c = line.chars().count() as u32;
-        let tmp_stripped_line = &line[1..line.len()-1];
+    for l in file.lines() {
+        let line_len = l.chars().count() as u32;
+        let mut real_char_len: u32 = 0;
 
-        let slash = tmp_stripped_line.matches("\\\\").count() as u32;
-        let quote = tmp_stripped_line.matches("\\\"").count() as u32;
-        let hex = tmp_stripped_line.matches("\\x").count() as u32;
+        let mut open: u8 = 0;
 
-        total_hex += hex;
-        total_quote += quote;
-        total_slash += slash;
-        total_surrounding_quotes += 2;
+        for (i, c) in l.chars().enumerate() {
+            if open > 0 {
+                open -= 1;
+                continue;
+            }
+            if i == 0 || i as u32 == line_len - 1 {
+                continue;
+            }
+            if c == '\\' {
+                // slash
+                if l.chars().nth(i + 1).unwrap() == '\\' {
+                    slash += 1;
+                    real_char_len += 1;
+                    open = 1;
+                    continue;
+                }
+                // quote
+                else if l.chars().nth(i + 1).unwrap() == '\"' {
+                    println!("{l} >>> {}", l.get(i..).unwrap());
+                    quote += 1;
+                    real_char_len += 1;
+                    open = 1;
+                    continue;
+                }
+                // hex
+                else if l.chars().nth(i + 1).unwrap() == 'x' {
+                    let a: u32 = l.chars().nth(i + 2).unwrap().into();
+                    let b: u32 = l.chars().nth(i + 3).unwrap().into();
 
-        let tmp_b = tmp_c - 2 - (slash) - (quote) - (hex*3);
-
-        println!("{tmp_stripped_line} {tmp_c} {tmp_b} | \\{slash} \\\"{quote} \\x{hex}");
-        character_counter += tmp_c;
-        byte_counter += tmp_b;
+                    if ((48..=57).contains(&a) || (97..=102).contains(&a))
+                        && ((48..=57).contains(&b) || (97..=102).contains(&b))
+                    {
+                        hex += 1;
+                        real_char_len += 1;
+                        open = 3;
+                        continue;
+                    }
+                }
+            } else {
+                real_char_len += 1;
+            }
+        }
+        character_counter += line_len;
+        byte_counter += real_char_len;
     }
-    println!("Result= {character_counter}-{byte_counter} = {}", character_counter-byte_counter);
-    println!("Debug: hex:{total_hex}/124 quote:{total_quote}/255 slash:{total_slash}/113 sur:{total_surrounding_quotes}")
+
+    println!(
+        "Result= {character_counter}-{byte_counter} = {}",
+        character_counter - byte_counter
+    );
+    println!("Debug: total:{character_counter} hex:{hex}/124 quote:{quote}/248 slash:{slash}/113")
 }
