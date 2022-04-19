@@ -14,9 +14,11 @@ fn main() {
     let mut quote = 0;
 
     let mut super_encoded: u32 = 0;
+    let mut manual_super_encoded: u32 = 600; //start with existing quotes
 
     for l in file.lines() {
         // part2
+        // cheating here a bit, as debug print escapes characteres out of the box :)
         super_encoded += format!("{:?}", l).chars().count() as u32;
         let line_len = l.chars().count() as u32;
         let mut real_char_len: u32 = 0;
@@ -24,6 +26,11 @@ fn main() {
         let mut open: u8 = 0;
 
         for (i, c) in l.chars().enumerate() {
+            // part2 no cheat
+            if vec!['\\', '\"'].contains(&c) {
+                manual_super_encoded += 1;
+            }
+
             if open > 0 {
                 open -= 1;
                 continue;
@@ -77,5 +84,5 @@ fn main() {
         "Pert2: Result= {super_encoded}-{character_counter} = {}",
         super_encoded - character_counter
     );
-    println!("Debug: total:{character_counter} hex:{hex}/124 quote:{quote}/248 slash:{slash}/113")
+    println!("Debug: total:{character_counter} hex:{hex}/124 quote:{quote}/248 slash:{slash}/113 manual_super:{manual_super_encoded}")
 }
