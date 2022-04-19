@@ -1,3 +1,5 @@
+use std::fmt::format;
+
 fn main() {
     // escapes:
     // \\ \" \x12
@@ -11,7 +13,11 @@ fn main() {
     let mut hex = 0;
     let mut quote = 0;
 
+    let mut super_encoded: u32 = 0;
+
     for l in file.lines() {
+        // part2
+        super_encoded += format!("{:?}", l).chars().count() as u32;
         let line_len = l.chars().count() as u32;
         let mut real_char_len: u32 = 0;
 
@@ -66,6 +72,10 @@ fn main() {
     println!(
         "Result= {character_counter}-{byte_counter} = {}",
         character_counter - byte_counter
+    );
+    println!(
+        "Pert2: Result= {super_encoded}-{character_counter} = {}",
+        super_encoded - character_counter
     );
     println!("Debug: total:{character_counter} hex:{hex}/124 quote:{quote}/248 slash:{slash}/113")
 }
